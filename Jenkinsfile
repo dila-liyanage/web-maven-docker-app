@@ -5,33 +5,42 @@ pipeline {
         maven 'MAVEN3'
     }
 
+    environment {
+        DOCKER_USERNAME = 'dilshanliyanage1000'
+        DOCKER_IMAGE = 'dilshanliyanage1000/web-maven-docker-app'
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/dila-liyanage/web-maven-docker-app.git'
+                checkout scm
             }
         }
-        stage('Build') {
+        stage('Build Maven Project') {
             steps {
                 bat 'mvn clean install'
             }
         }
-        stage('Test') {
+        stage('Docker Login') {
             steps {
-                bat 'mvn test'
+                withCredentials([string(credentialsId: 'DockerHub_Pwd', variable: 'DOCKER_PASSWORD')]) {
+                    sh """
+                    echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin
+                    """
+                }
             }
         }
-    }
 
-    post {
-        always {
-            archiveArtifacts artifacts: '**/target/*.war', allowEmptyArchive: true
+        stage('Docker Build') {
+            steps {
+                sh "docker build -t ${DOCKER_IMAGE}:latest ."
+            }
         }
-        success {
-            echo 'Pipeline executed successfully!'
-        }
-        failure {
-            echo 'Pipeline execution failed.'
+
+        stage('Docker Push') {
+            steps {
+                sh "docker push ${DOCKER_IMAGE}:latest"
+            }
         }
     }
 }
