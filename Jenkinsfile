@@ -7,7 +7,6 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'dilshanliyanage1000/web-maven-docker-app'
-        DOCKER_HUB_CREDENTIALS = credentials('DockerHub_Pwd')
     }
 
     stages {
@@ -28,7 +27,7 @@ pipeline {
         }
         stage('Docker Login') {
             steps {
-                bat 'docker login -u dilshanliyanage1000 -p ${DOCKER_HUB_CREDENTIALS}'
+                bat 'docker login -u dilshanliyanage1000 -p NExUS@1708937'
             }
         }
         stage('Docker Build') {
