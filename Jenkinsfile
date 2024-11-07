@@ -6,14 +6,14 @@ pipeline {
     }
 
     environment {
-        DOCKER_USERNAME = 'dilshanliyanage1000'
         DOCKER_IMAGE = 'dilshanliyanage1000/web-maven-docker-app'
+        DOCKER_HUB_CREDENTIALS = credentials('DockerHub_Pwd')
     }
 
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git branch: 'main', url: 'https://github.com/dila-liyanage/web-maven-docker-app.git'
             }
         }
         stage('Build Maven Project') {
@@ -21,21 +21,23 @@ pipeline {
                 bat 'mvn clean install'
             }
         }
+        stage('Unit Test') {
+            steps {
+                bat 'mvn test'
+            }
+        }
         stage('Docker Login') {
             steps {
-                withCredentials([string(credentialsId: 'DockerHub_Pwd', variable: 'DOCKER_PASSWORD')]) {
-                    bat """
-                    echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin
-                    """
+                    bat 'docker login -u dilshanliyanage1000 -p ${DOCKER_HUB_CREDENTIALS}'
                 }
             }
         }
-
         stage('Docker Build') {
             steps {
                 bat "docker build -t ${DOCKER_IMAGE}:latest ."
             }
         }
+
 
         stage('Docker Push') {
             steps {
