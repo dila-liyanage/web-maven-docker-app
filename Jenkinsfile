@@ -28,8 +28,7 @@ pipeline {
         }
         stage('Docker Login') {
             steps {
-                    bat 'docker login -u dilshanliyanage1000 -p ${DOCKER_HUB_CREDENTIALS}'
-                }
+                bat 'docker login -u dilshanliyanage1000 -p ${DOCKER_HUB_CREDENTIALS}'
             }
         }
         stage('Docker Build') {
