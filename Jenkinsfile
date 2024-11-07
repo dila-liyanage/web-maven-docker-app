@@ -24,7 +24,7 @@ pipeline {
         stage('Docker Login') {
             steps {
                 withCredentials([string(credentialsId: 'DockerHub_Pwd', variable: 'DOCKER_PASSWORD')]) {
-                    sh """
+                    bat """
                     echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin
                     """
                 }
@@ -33,13 +33,13 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh "docker build -t ${DOCKER_IMAGE}:latest ."
+                bat "docker build -t ${DOCKER_IMAGE}:latest ."
             }
         }
 
         stage('Docker Push') {
             steps {
-                sh "docker push ${DOCKER_IMAGE}:latest"
+                bat "docker push ${DOCKER_IMAGE}:latest"
             }
         }
     }
