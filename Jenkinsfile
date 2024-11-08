@@ -6,6 +6,7 @@ pipeline {
     }
 
     environment {
+        DOCKER_PASSWORD = credentials('DockerHubPassword')
         DOCKER_IMAGE = 'dilshanliyanage1000/web-maven-docker-app'
     }
 
@@ -17,17 +18,17 @@ pipeline {
         }
         stage('Build Maven Project') {
             steps {
-                bat 'mvn clean install'
+                bat "mvn clean install"
             }
         }
         stage('Unit Test') {
             steps {
-                bat 'mvn test'
+                bat "mvn test"
             }
         }
         stage('Docker Login') {
             steps {
-                bat 'docker login -u dilshanliyanage1000 -p NExUS@1708937'
+                bat "docker login -u dilshanliyanage1000 -p ${DOCKER_PASSWORD}"
             }
         }
         stage('Docker Build') {
